@@ -1,0 +1,45 @@
+                               UFO VIZ to do list:
+
+
+
+# things I still need to change:
+# 1) put each major div into its own color background box
+# 2) make the choropleth graph
+
+# ideas for graph
+
+
+
+# Ideas for cloropleth graph:
+
+# IMPORTANT - consider normalizaion by area or by population (if available)
+# year slider and have it be selectable by shape
+# chloropleth map down to counties, num by year
+# small lines seperating counties
+# large lines seperating states ideally
+
+# maybe also a scatter
+# searchable by shape
+# overlay of areaa 51, skinwalker ranch, etc
+
+
+
+# To do list for graph data:
+
+# 1) Drop counties that are not in the counties geojson file from the main
+#    dataset and from the population dataset
+
+# 2) Figure out a strategy for normalizing data for counties with decades that 
+     have no population data but do have ufo sightings
+	Possible solutions:
+	a) moving forward or back to the closest population
+	b) imputing population based on percentage increases and decreases
+	   within the same state
+
+# 3) Add zero values to all counties that do not have any sightings ever
+
+# 4) A couple configuration options for this graph:
+	a) cumulative time series by decade, linear scale
+	b) non cumulative time series by year or decade, linear scale
+	c) both maps on the same page
+	d) One map only, but with an option to select cumulative or not 
