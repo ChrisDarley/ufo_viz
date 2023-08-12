@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import requests
+import json
+import os
 
 def tweak_df_(df):
     """function to clean the dataset and make adjustments for plotting"""
@@ -113,4 +115,34 @@ def fetch_map_data(tweaked_):
         # join the current dataframe with the new_cols_df dataframe
         .join(new_cols_df)
         )
-    
+
+def get_county_fips_df():
+    """makes a dataframe of all counties contained in counties geojson
+    object by adding the state and county codes"""
+    f = open("counties.json")
+    counties = json.load(f)
+    f.close()
+    keys_to_extract = ['STATE', 'COUNTY']
+    records = []
+    for item in counties.get('features'):
+        base = item.get('properties')
+        res = dict(filter(lambda item: item[0] in keys_to_extract, base.items()))
+        records.append(res)
+        
+    return(pd.DataFrame.from_records(records)
+        .assign(fips=lambda df_: df_.STATE+df_.COUNTY))
+
+def get_population_fips_df():
+    """Create a dataframe from the historical population csv data and add
+    a county_fips column by combining STATEFP and COUNTYFP columns"""
+    population_path = os.path.join(
+        os.getcwd(),
+        "pop_data/nhgis0002_csv/nhgis0002_ts_nominal_county.csv"
+    )
+
+    return (
+        pd.read_csv(population_path,
+            dtype={"STATEFP":object, "COUNTYFP":object})
+        .assign(county_fips=lambda df_:
+            df_["STATEFP"]+df_["COUNTYFP"])
+        )

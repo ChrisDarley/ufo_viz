@@ -1,6 +1,10 @@
 from preprocess_data import tweak_df_, get_temp_ranks, fetch_map_data
+from preprocess_data import get_county_fips_df
 import pandas as pd
 import os
+import requests
+import json
+
 
 def populate():
     """creates and cleans main dataset and creates other static dataframes to be used for 
@@ -36,11 +40,20 @@ def populate():
         location_raw.to_csv('location_raw.csv')
 
     # read counties.json from internet, store it as a json object
-    # (and possibly also a dataframe)
+    if 'counties.json' not in os.listdir():
+        r = requests.get('https://raw.githubusercontent.com/plotly/'
+            'datasets/master/geojson-counties-fips.json')
+        data = r.json()
+        with open("counties.json", "w") as f:
+            json.dump(data, f)
+
+    # populate the counties dataframe and store it as a csv
+    if "county_fips.csv" not in os.listdir():
+        county_fips = get_county_fips_df()
+        county_fips.to_csv("county_fips.csv")
 
 
-
-    # populate the counties dataframe and store it as a csv 
+    
 
 
 

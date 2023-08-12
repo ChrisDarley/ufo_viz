@@ -16,21 +16,7 @@ location_raw = pd.read_csv(
 
 ############################################
 
-from urllib.request import urlopen
-import json
-with urlopen('https://raw.githubusercontent.com/plotly/datasets/ma'
-             'ster/geojson-counties-fips.json') as response:
-    counties = json.load(response)
-
-keys_to_extract = ['STATE', 'COUNTY']
-
-records = []
-for item in counties.get('features'):
-    base = item.get('properties')
-    res = dict(filter(lambda item: item[0] in keys_to_extract, base.items()))
-    records.append(res)
-
-counties_fips = pd.DataFrame.from_records(records).assign(fips=lambda df_: df_.STATE+df_.COUNTY)
+county_fips = pd.read_csv("county_fips.csv")
 
 #########################################
 
