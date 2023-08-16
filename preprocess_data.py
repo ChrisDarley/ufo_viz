@@ -122,7 +122,7 @@ def get_county_fips_df():
     f = open("counties.json")
     counties = json.load(f)
     f.close()
-    keys_to_extract = ['STATE', 'COUNTY']
+    keys_to_extract = ['STATE', 'COUNTY', 'CENSUSAREA']
     records = []
     for item in counties.get('features'):
         base = item.get('properties')
@@ -146,3 +146,23 @@ def get_population_fips_df():
         .assign(county_fips=lambda df_:
             df_["STATEFP"]+df_["COUNTYFP"])
         )
+
+def location_area_join():
+    """joins location_raw with counties on fips to add area to location_raw"""
+    location = pd.read_csv(
+        "location_raw.csv", index_col="datetime", parse_dates=True,
+        dtype={"County.FIPS":object})
+    counties = pd.read_csv(
+        "county_fips.csv", index_col=0, dtype={"fips":object})
+    return (location
+        # moves index to a column called datetime             
+        .reset_index()
+        # the merge operation creates a new index which
+        # is not optional, so it must be reset to original
+        .merge(
+            counties[["fips", "CENSUSAREA"]],
+            left_on="County.FIPS",
+            right_on="fips", validate="m:1", how="left")
+        # resets datetime column to index
+        .set_index("datetime"))
+    
